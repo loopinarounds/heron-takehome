@@ -8,8 +8,7 @@ app = Flask(__name__)
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg'}
 
 def extract_text_from_pdf(file):
-    # Read the content directly from the FileStorage object
-    reader = PyPDF2.PdfReader(file)  # Use the FileStorage object directly
+    reader = PyPDF2.PdfReader(file) 
     text = ""
     for page in reader.pages:
         text += page.extract_text() or ""
