@@ -5,7 +5,13 @@ import os
 
 app = Flask(__name__)
 
+
+
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'docx'}
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def load_model(model_path):
     relative_path = os.path.join(os.path.dirname(__file__), model_path)
@@ -27,16 +33,22 @@ def predict_file_class(model, file):
 @app.route('/classify_file', methods=['POST'])
 def classify_file_route():
     if 'file' not in request.files:
-        return jsonify({"error": "No file part in the request"}), 400
+        return jsonify({"error": "No file in the request"}), 400
 
     files = request.files.getlist('file')  
-    if not files:
+    
+    if not files or all(file.filename == '' for file in files):
         return jsonify({"error": "No selected files"}), 400
+    
+    
 
     model = load_model('../models/model.pkl')  
 
     results = []
     for file in files:
+        if not allowed_file(file.filename):
+            results.append({"filename": file.filename, "error" : "Unsupported file type"}) 
+            continue  
         predicted_class = predict_file_class(model, file)
         results.append({"filename": file.filename, "file_class": predicted_class})
 

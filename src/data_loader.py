@@ -43,28 +43,24 @@ def extract_text_from_image(file_path_or_file):
 def load_data(data_dir):
     texts = []
     labels = []
+    extraction_map = {
+        '.pdf': extract_text_from_pdf,
+        '.docx': extract_text_from_docx,
+        '.jpg': extract_text_from_image,
+        '.jpeg': extract_text_from_image,
+    }
+
     for file_name in os.listdir(data_dir):
         file_path = os.path.join(data_dir, file_name)
-        
-        if file_name.endswith('.pdf'):
-            label = determine_label(file_name) 
-            text = extract_text_from_pdf(file_path)
-            texts.append(text)
-            labels.append(label)  
-        elif file_name.endswith('.docx'):
-            label = determine_label(file_name)  
-            text = extract_text_from_docx(file_path)
-            texts.append(text)
-            labels.append(label)  
-        elif file_name.endswith('.jpg') or file_name.endswith('.jpeg'):
-            label = determine_label(file_name) 
-            text = extract_text_from_image(file_path)
-            texts.append(text)
-            labels.append(label) 
-        else:
-            print(f"Unsupported file type: {file_name}")
-            continue 
+        file_extension = os.path.splitext(file_name)[1].lower()  # Get the file extension
 
+        if file_extension in extraction_map:
+            label = determine_label(file_name)
+            text = extraction_map[file_extension](file_path)  # Call the appropriate extraction function
+            texts.append(text)
+            labels.append(label)
+        else:
+            continue;
     print(f"Total texts: {len(texts)}, Total labels: {len(labels)}")
     for i in range(len(texts)):
         print(f"Text {i}: {texts[i][:30]}... | Label: {labels[i]}")  
