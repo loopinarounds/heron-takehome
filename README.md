@@ -24,18 +24,19 @@
     ```
 
 5. Test the classifier using a tool like curl:
-    ```shell
+   ```shell
     curl -X POST -F 'file=@path_to_pdf.pdf' http://127.0.0.1:5000/classify_file
-    ```
+   ```
     Multiple files are accepted: 
     ```shell
     curl -X POST \
 -F 'file=@/file_path' \
 -F 'file=@/file_path' \
-http://127.0.0.1:5000/classify_file```
+http://127.0.0.1:5000/classify_file
+```
 
 5. Run tests:
-   ```shell
+  ```shell
     pytest
     ```
 
