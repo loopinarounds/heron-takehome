@@ -19,8 +19,8 @@
     ```
 
 4. Train the model based on the files found in '/files':
-```shell 
-    python -m src/train_classifier
+  ```shell
+    python -m train_classifier
     ```
 
 5. Test the classifier using a tool like curl:
