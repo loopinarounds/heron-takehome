@@ -1,46 +1,46 @@
 from flask import Flask, request, jsonify
 import joblib
-import PyPDF2
+from .data_loader import extract_text_from_pdf, extract_text_from_docx, extract_text_from_image
+import os
 
-from src.classifier import classify_file
 app = Flask(__name__)
 
-ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg'}
-
-def extract_text_from_pdf(file):
-    reader = PyPDF2.PdfReader(file) 
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() or ""
-    return text
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'docx'}
 
 def load_model(model_path):
-    return joblib.load(model_path)
+    relative_path = os.path.join(os.path.dirname(__file__), model_path)
+    return joblib.load(relative_path)
 
 def predict_file_class(model, file):
-    text = extract_text_from_pdf(file)  
+    if file.filename.endswith('.pdf'):
+        text = extract_text_from_pdf(file)
+    elif file.filename.endswith('.docx'):
+        text = extract_text_from_docx(file)
+    elif file.filename.endswith('.jpg') or file.filename.endswith('.jpeg') or file.filename.endsWith('.png'):
+        text = extract_text_from_image(file)
+    else:
+        raise ValueError("Unsupported file type")
+
     prediction = model.predict([text])
     return prediction[0]
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 @app.route('/classify_file', methods=['POST'])
 def classify_file_route():
-
     if 'file' not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
 
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+    files = request.files.getlist('file')  
+    if not files:
+        return jsonify({"error": "No selected files"}), 400
 
-    model = load_model('/Users/bradleyweaver/Documents/heron/join-the-siege/models/model.pkl')  # Load your trained model
-    predicted_class = predict_file_class(model, file)
+    model = load_model('../models/model.pkl')  
 
+    results = []
+    for file in files:
+        predicted_class = predict_file_class(model, file)
+        results.append({"filename": file.filename, "file_class": predicted_class})
 
-    return jsonify({"file_class": predicted_class}), 200
-
+    return jsonify(results), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
