@@ -19,7 +19,7 @@
     ```
 
 4. Train the model based on the files found in '/files':
-  ```shell
+    ```shell
     python -m train_classifier
     ```
 
@@ -29,14 +29,11 @@
    ```
     Multiple files are accepted: 
     ```shell
-    curl -X POST \
--F 'file=@/file_path' \
--F 'file=@/file_path' \
-http://127.0.0.1:5000/classify_file
-```
+    curl -X POST \ -F 'file=@/file_path' \ -F 'file=@/file_path' \ http://127.0.0.1:5000/classify_file
+    ```
 
 5. Run tests:
-  ```shell
+    ```shell
     pytest
     ```
 
