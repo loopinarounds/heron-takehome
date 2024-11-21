@@ -27,7 +27,7 @@ def test_no_file_in_request(client):
     assert response.get_json() == {"error": "No file in the request"}
 
 def test_no_selected_file(client):
-    data = {'file': (BytesIO(b""), '')}  # Empty filename
+    data = {'file': (BytesIO(b""), '')}  
     response = client.post('/classify_file', data=data, content_type='multipart/form-data')
     assert response.status_code == 400
     assert response.get_json() == {"error": "No selected files"}

@@ -34,6 +34,21 @@
 3) Expose it as a Restful API - implement some sort of api key security to be used to verify users - they can then create classes in their own codebase that interacts with our api rather than downloading and hosting themselves.
 
 
+# What have I done?
+
+1) Created a Naive-Bayes model that is trained from files in /files. I have made use of the provided files, more files can easily be added for more accurate results.
+
+2) Better error handling throughout
+
+3) Better scaling - the api now accepts multiple files in a comma seperated list, and returns results for each file sent as a list referencing the filename and type.
+
+4) Better testing
+
+5) Support for docx and good modular code that allows for more file types to be easily added.
+
+
+
+
 
 
 
